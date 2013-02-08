@@ -5,17 +5,32 @@
  *      Author: cvangysel
  */
 
+#include "zombieland/rand.h"
+
 #include "factory.h"
 #include "handler.h"
 
-zl::Zombie* sfml::Factory::createZombie(zl::Region* region) {
-	return new zl::Zombie(new sfml::EntityHandler(this->window), region);
+sfml::Factory::Factory(sf::RenderWindow& window) : window(window) {
+	this->zombieResources[0] = new RedZombieResources();
+	this->zombieResources[1] = new PinkZombieResources();
+	this->zombieResources[2] = new OrangeZombieResources();
+	this->zombieResources[3] = new CyanZombieResources();
 }
 
-zl::Player* sfml::Factory::createPlayer(zl::Region* region) {
-	return new zl::Player(new sfml::EntityHandler(this->window), region);
+sfml::Factory::~Factory() {
+	for (int i = 0; i < 4; i ++) {
+		delete this->zombieResources[i];
+	}
+}
+
+zl::Zombie* sfml::Factory::createZombie(const zl::Zombieland* game) {
+	return new zl::Zombie(game, new sfml::EntityHandler(this->window, **rand(this->zombieResources, 4)));
+}
+
+zl::Player* sfml::Factory::createPlayer(const zl::Zombieland* game) {
+	return new zl::Player(game, new sfml::EntityHandler(this->window, this->playerResources));
 }
 
 zl::Block* sfml::Factory::createBlock(const zl::Vector& position, const zl::Vector& size) {
-	return new zl::Block(new sfml::ObstacleHandler(this->window), position, size);
+	return new zl::Block(new sfml::ObstacleHandler(this->window, this->obstacleResources), position, size);
 }

@@ -16,40 +16,51 @@
 
 namespace zl {
 
+	typedef std::pair<const Obstacle*, const Obstacle*> Obstacles;
+
 	class Zombieland;
 	class Entity;
 
 	class Entity : public Object {
 	public:
-		Entity(Handler*, Region*);
+		Entity(const Zombieland*, Handler*, double);
 		virtual ~Entity();
 
 		virtual void process(Zombieland&, unsigned int);
 
 		const Region& getRegion() const;
 
-		Vector getSize() const;
-		Vector getPosition() const;
+		virtual Vector getSize() const;
+		virtual Vector getPosition() const;
+
+		virtual Direction getDirection() const;
 	protected:
 		Region* region;
 
 		Vector size;
 		Vector position;
+
+		double velocity;
 		Vector direction;
+		Obstacles blocked;
 	};
 
 	class Zombie : public Entity {
 	public:
-		Zombie(Handler* handler, Region* location) : Entity(handler, location) { }
+		Zombie(const Zombieland*, Handler* handler);
 
 		virtual void process(Zombieland&, unsigned int);
 	};
 
 	class Player : public Entity {
 	public:
-		Player(Handler* handler, Region* location) : Entity(handler, location) { }
+		Player(const Zombieland*, Handler* handler);
 
 		virtual void process(Zombieland&, unsigned int);
+
+		Direction getDirection(const Region*) const;
+	protected:
+		PathInformation pathInformation;
 	};
 
 }

@@ -8,30 +8,33 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#include <random>
 #include <unordered_map>
 #include <iterator>
-
-#include "utils.h"
+#include <utility>
 
 namespace zl {
 
-	int rand(int min, int max) {
-		return ((double) std::rand() / ((double) RAND_MAX + 1.0)) * (max - min + 1) + min;
-	}
+	enum Direction {
+		STATIONARY = -1,
+		UP = 0,
+		RIGHT = 1,
+		DOWN = 2,
+		LEFT = 3
+	};
 
-	template <typename K, typename V>
-	V rand(const std::unordered_map<K, V>& map) {
-		typename std::unordered_map<K, V>::const_iterator it = map.cbegin();
-		std::advance(it, rand(0, map.size()));
+	Direction invert(Direction);
+	std::ostream& operator<<(std::ostream&, const Direction&);
 
-		return it->second;
-	}
+	enum Axis {
+		BOTH,
+		HORIZONTAL,
+		VERTICAL
+	};
 
-	template <typename T>
-	const T* rand(const T* array, int max) {
-		return array + (std::rand() % max);
-	}
+	Axis invert(Axis);
+	Axis convert(Direction);
+	std::ostream& operator<<(std::ostream&, const Axis&);
+	std::pair<Direction, Direction> convert(Axis);
 
 }
 

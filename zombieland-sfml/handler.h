@@ -12,22 +12,27 @@
 
 #include "zombieland/zombieland.h"
 
+#include "resource.h"
+
 namespace sfml {
 
 	void updateSprite(const sf::Vector2u&, sf::Sprite&, const zl::Object&);
 
 	class Handler : public zl::Handler {
 	public:
-		Handler(sf::RenderWindow& window) : zl::Handler(), window(window), sprite(0) { }
+		Handler(sf::RenderWindow& window, const sfml::Resources<ResourceIdentifier>& resources) : zl::Handler(), resources(resources), window(window), sprite(0) {
+		}
 		virtual ~Handler();
 	protected:
+		const sfml::Resources<ResourceIdentifier>& resources;
+
 		sf::RenderWindow& window;
 		sf::Sprite* sprite;
 	};
 
 	class EntityHandler : public sfml::Handler {
 	public:
-		EntityHandler(sf::RenderWindow&);
+		EntityHandler(sf::RenderWindow&, const sfml::Resources<ResourceIdentifier>&);
 		virtual ~EntityHandler() { }
 
 		void handle(zl::Zombieland&, const zl::Object&);
@@ -35,7 +40,7 @@ namespace sfml {
 
 	class ObstacleHandler : public sfml::Handler {
 	public:
-		ObstacleHandler(sf::RenderWindow&);
+		ObstacleHandler(sf::RenderWindow&, const sfml::Resources<ResourceIdentifier>&);
 		virtual ~ObstacleHandler() { }
 
 		void handle(zl::Zombieland&, const zl::Object&);

@@ -26,12 +26,21 @@ namespace zl {
 		void tick(unsigned int = 0);
 
 		const Terrain& getTerrain() const;
-		const Entity& getPlayer() const;
+
+		const Player& getPlayer() const;
+		const list<Zombie*>& getZombies() const;
 	private:
+		void placeBlock(Vector, Vector);
+		void spawnZombie();
+
 		Factory& factory;
 
-		Entity* player;
+		Player* player;
+
 		list<Object*> objects;
+		list<Zombie*> zombies;
+		list<const Obstacle*> obstacles;
+
 		Terrain* terrain;
 	};
 

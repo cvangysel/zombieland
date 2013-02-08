@@ -8,22 +8,10 @@
 #ifndef OBJECT_H_
 #define OBJECT_H_
 
-#include <utility>
-#include <iostream>
+#include "vector.h"
+#include "utils.h"
 
 namespace zl {
-
-	typedef std::pair<double, double> Vector;
-
-	zl::Vector operator+(const zl::Vector&, const zl::Vector&);
-	zl::Vector operator+=(zl::Vector&, const zl::Vector&);
-	zl::Vector operator-(const zl::Vector&, const zl::Vector&);
-	zl::Vector operator/(const zl::Vector&, double);
-	zl::Vector operator*(const zl::Vector&, double);
-	bool operator>=(const zl::Vector&, const zl::Vector&);
-	bool operator<=(const zl::Vector&, const zl::Vector&);
-
-	std::ostream& operator<<(std::ostream& cout, const Vector& vector);
 
 	class Zombieland;
 	class Object;
@@ -45,6 +33,10 @@ namespace zl {
 
 		virtual Vector getSize() const = 0;
 		virtual Vector getPosition() const = 0;
+
+		virtual Direction getDirection() const {
+			return STATIONARY;
+		};
 	protected:
 		Handler* handler;
 	};

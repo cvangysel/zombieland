@@ -10,25 +10,20 @@
 
 #include <list>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "obstacle.h"
+#include "utils.h"
 
 namespace zl {
-
-	enum Direction {
-		UP = 0,
-		RIGHT = 1,
-		DOWN = 2,
-		LEFT = 3
-	};
-
-	Direction invert(Direction);
 
 	class Region;
 	class Terrain;
 
 	typedef Region*** Graph;
 	typedef std::unordered_set<const Obstacle*> ObstacleList;
+
+	typedef std::unordered_map<const Region*, Direction> PathInformation;
 
 	class Region {
 	public:
@@ -38,6 +33,7 @@ namespace zl {
 		void disconnect();
 
 		const std::unordered_set<const Obstacle*>& getObstacles() const;
+		bool contains(const Obstacle*) const;
 
 		Region* getAdjacent(Direction) const;
 		Region* const* getAdjacent() const;
@@ -71,8 +67,9 @@ namespace zl {
 		int getWidth() const;
 		int getHeight() const;
 
-		void calculatePath(const Region*, const Region*, std::list<Direction>&) const;
-		Region* getPosition();
+		void calculatePath(const Region*, const Region*, PathInformation&) const;
+
+		Region* getRegion(bool = true) const;
 
 		friend class Region;
 	private:

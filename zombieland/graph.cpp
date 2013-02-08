@@ -12,26 +12,13 @@
 #include <utility>
 #include <algorithm>
 
-#include "utils.h"
 #include "graph.h"
 #include "object.h"
+#include "rand.h"
 
 using std::cout;
 using std::endl;
 using std::min;
-
-zl::Direction zl::invert(Direction direction) {
-	switch (direction) {
-	case UP:
-		return DOWN;
-	case DOWN:
-		return UP;
-	case LEFT:
-		return RIGHT;
-	case RIGHT:
-		return LEFT;
-	}
-}
 
 zl::Region* zl::Region::create(Terrain& terrain, int x, int y) {
 	if (x < 0 || y < 0) {
@@ -82,6 +69,10 @@ void zl::Region::disconnect() {
 
 const std::unordered_set<const zl::Obstacle*>& zl::Region::getObstacles() const {
 	return this->obstacles;
+}
+
+bool zl::Region::contains(const Obstacle* obstacle) const {
+	return this->obstacles.find(obstacle) != this->obstacles.end();
 }
 
 zl::Region* zl::Region::getAdjacent(Direction direction) const {
@@ -195,6 +186,8 @@ zl::Region* zl::Terrain::getStart() {
 			}
 		}
 	}
+
+	return 0;
 }
 
 int zl::Terrain::getWidth() const {
@@ -205,9 +198,13 @@ int zl::Terrain::getHeight() const {
 	return this->height;
 }
 
-void zl::Terrain::calculatePath(const Region* begin, const Region* end, std::list<Direction>& path) const {
+void zl::Terrain::calculatePath(const Region* begin, const Region* end, PathInformation& pathInformation) const {
+	if (pathInformation.find(begin) != pathInformation.end()) {
+		return;
+	}
 	std::list<const Region*> queue;
 	std::unordered_set<const Region*> visited;
+
 	std::unordered_map<const Region*, std::pair<const Region*, Direction>> previous;
 
 	queue.push_back(begin);
@@ -218,7 +215,8 @@ void zl::Terrain::calculatePath(const Region* begin, const Region* end, std::lis
 
 		if (node == end) {
 			while (previous.find(node) != previous.end()) {
-				path.push_front(previous[node].second);
+				pathInformation[previous[node].first] = previous[node].second;
+
 				node = previous[node].first;
 			}
 
@@ -232,7 +230,7 @@ void zl::Terrain::calculatePath(const Region* begin, const Region* end, std::lis
 		for (int i = 0; i < 4; i ++) {
 			Region* child = 0;
 
-			if ((child = *(adjacent + i)) && (visited.find(child) == visited.end())) {
+			if ((child = *(adjacent + i)) && child && (visited.find(child) == visited.end()) && (!child->obstacles.size() || child == end)) {
 				queue.push_back(child);
 
 				previous[child] = std::pair<const Region*, Direction>(node, Direction(i));
@@ -241,6 +239,12 @@ void zl::Terrain::calculatePath(const Region* begin, const Region* end, std::lis
 	}
 }
 
-zl::Region* zl::Terrain::getPosition() {
-	return *rand(*rand(this->graph, this->width), this->height);
+zl::Region* zl::Terrain::getRegion(bool avoidObstacles) const {
+	Region* region = 0;
+
+	while (region == 0 || (avoidObstacles != (region->obstacles.size() == 0))) {
+		region = *rand(*rand(this->graph, this->width), this->height);
+	}
+
+	return region;
 }

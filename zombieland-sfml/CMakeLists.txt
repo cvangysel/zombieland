@@ -1,4 +1,4 @@
-set(SRC main.cpp handler.cpp factory.cpp)
+set(SRC main.cpp handler.cpp factory.cpp resource.cpp)
 
 include_directories(../zombieland)
 set(LIBS ${LIBS} libzombieland)

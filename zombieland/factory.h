@@ -20,8 +20,8 @@ namespace zl {
 
 		friend class Zombieland;
 	protected:
-		virtual Zombie* createZombie(Region*) = 0;
-		virtual Player* createPlayer(Region*) = 0;
+		virtual Zombie* createZombie(const Zombieland*) = 0;
+		virtual Player* createPlayer(const Zombieland*) = 0;
 
 		virtual Block* createBlock(const Vector&, const Vector&) = 0;
 	};
